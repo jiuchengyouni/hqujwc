@@ -1,4 +1,4 @@
-package http
+package httpUtil
 
 import (
 	"bytes"
@@ -37,6 +37,7 @@ func DoGet(loginUrl string, cookies map[string]string) (resp *http.Response, err
 		}
 		req.AddCookie(cookie)
 	}
+	req.Header.Set("Content-Type", "application/json")
 	resp, err = client.Do(req)
 	if err != nil {
 		fmt.Println(err)

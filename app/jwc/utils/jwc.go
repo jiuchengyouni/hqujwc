@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/html"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
+	"hqujwc/pkg/httpUtil"
 	model "hqujwc/types"
 	"io/ioutil"
 	"log"
@@ -89,42 +90,24 @@ func GetGsSession(requestBody *model.LoginRequestBody) (gsSession string, err er
 }
 
 func GetEmaphome_WEU(gsSession string) (emaphome_WEU string, err error) {
-	client := &http.Client{}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req, err := http.NewRequest("GET", "https://jwapp.hqu.edu.cn/jwapp/sys/emaphome/portal/index.do?forceCas=1", nil)
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	Url := "https://jwapp.hqu.edu.cn/jwapp/sys/emaphome/portal/index.do?forceCas=1"
+	resp, err := httpUtil.DoGet(Url, requestCookies)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return "", err
 	}
-	//req.AddCookie(cookie)
-	//cookie = &http.Cookie{
-	//	Name:  "EMAP_LANG",
-	//	Value: "zh",
-	//}
-	req.AddCookie(cookie)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
-	//fmt.Println(resp.Cookies())
-	cookies := fmt.Sprint(resp.Cookies())
+	responseCookies := fmt.Sprint(resp.Cookies())
 	var start int
-	for k, v := range cookies {
+	for k, v := range responseCookies {
 		if v == '=' {
 			start = k
 		}
 		if v == ';' {
-			emaphome_WEU = cookies[start+1 : k]
+			emaphome_WEU = responseCookies[start+1 : k]
 			break
 		}
 	}
-	//fmt.Println(emaphome_WEU)
 	return
 }
 
