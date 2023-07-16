@@ -36,7 +36,7 @@ func GetGsSession(requestBody *model.LoginRequestBody) (gsSession string, err er
 	req.Header.Set("Content-Type", "application/json")
 	// 发送请求
 	var resp *http.Response
-	var body map[string]interface{}
+	var body map[string]any
 	for i := 0; i < 4; i++ {
 		resp, err = client.Do(req)
 		fmt.Println(req)
@@ -198,7 +198,7 @@ func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, st
 	defer resp.Body.Close()
 	respJson, _ := ioutil.ReadAll(resp.Body)
 	body := JSONToMap(string(respJson))
-	gradeResponse := body["datas"].(map[string]interface{})["xscjcx"].(map[string]interface{})["rows"]
+	gradeResponse := body["datas"].(map[string]any)["xscjcx"].(map[string]any)["rows"]
 	stuYear, _ := strconv.Atoi(stuNum[:2])
 	semesterYear, _ := strconv.Atoi(year)
 	startAcademicYear := strconv.Itoa(stuYear + semesterYear - 1)
