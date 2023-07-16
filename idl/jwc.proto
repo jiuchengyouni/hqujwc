@@ -1,0 +1,19 @@
+syntax="proto3";
+option go_package = "jwc/";
+
+message LoginRequest {
+  // @inject_tag: json:"stunum" form:"stunum" uri:"stunum"
+  string StuNum=1;
+  // @inject_tag: json:"stupass" form:"stupass" uri:"stupass"
+  string StuPass=2;
+}
+
+message GsSessionResponse{
+  // @inject_tag: json:"ges_session" form:"ges_session" uri:"ges_session"
+  string GesSession=1;
+  // @inject_tag: json:"code" form:"code" uri:"code"
+  int64 code=2;
+}
+service JwcService{
+  rpc GetGsSession(LoginRequest)returns(GsSessionResponse);
+}
