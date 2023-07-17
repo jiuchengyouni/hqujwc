@@ -64,16 +64,16 @@ func GetGsSession(requestBody *model.LoginRequestBody) (gsSession string, err er
 		}
 	}
 	defer resp.Body.Close()
-	//jwapp, ok := body["msg"].(map[string]interface{})
+	//jwapp, ok := body["msg"].(map[string]any)
 	//if !ok {
 	//	return gsSession, errors.New("gsSession解析失败")
 	//}
-	//_, ok = jwapp["jwapp"].(map[string]interface{})["cookie"].(string)
+	//_, ok = jwapp["jwapp"].(map[string]any)["cookie"].(string)
 	//if !ok {
 	//	fmt.Println(1)
 	//	return gsSession, errors.New("gsSession解析失败")
 	//}
-	gsSession = fmt.Sprint(body["msg"].(map[string]interface{})["jwapp"].(map[string]interface{})["cookie"])
+	gsSession = fmt.Sprint(body["msg"].(map[string]any)["jwapp"].(map[string]any)["cookie"])
 	var start int
 	for k, v := range gsSession {
 		if v == '=' {
@@ -151,27 +151,27 @@ func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, st
 	var pscj string
 	var qmcj string
 	xq := "20" + startAcademicYear + "-20" + endAcademicYear + "-" + semester
-	for _, v := range gradeResponse.([]interface{}) {
-		if v.(map[string]interface{})["XNXQDM"] == xq {
-			if _, ok := v.(map[string]interface{})["ZCJ"].(float64); !ok {
+	for _, v := range gradeResponse.([]any) {
+		if v.(map[string]any)["XNXQDM"] == xq {
+			if _, ok := v.(map[string]any)["ZCJ"].(float64); !ok {
 				zcj = 0
 			} else {
-				zcj = v.(map[string]interface{})["ZCJ"].(float64)
+				zcj = v.(map[string]any)["ZCJ"].(float64)
 			}
-			if _, ok := v.(map[string]interface{})["PSCJ"].(string); !ok {
+			if _, ok := v.(map[string]any)["PSCJ"].(string); !ok {
 				pscj = ""
 			} else {
-				pscj = fmt.Sprint(v.(map[string]interface{})["PSCJ"].(string))
+				pscj = fmt.Sprint(v.(map[string]any)["PSCJ"].(string))
 			}
-			if _, ok := v.(map[string]interface{})["QMCJ"].(string); !ok {
+			if _, ok := v.(map[string]any)["QMCJ"].(string); !ok {
 				qmcj = ""
 			} else {
-				qmcj = fmt.Sprint(fmt.Sprint(v.(map[string]interface{})["QMCJ"].(string)))
+				qmcj = fmt.Sprint(fmt.Sprint(v.(map[string]any)["QMCJ"].(string)))
 			}
 			grades = append(grades, model.GradeInfo{
-				XF:      v.(map[string]interface{})["XF"].(float64),
-				XSKCM:   fmt.Sprint(v.(map[string]interface{})["XSKCM"].(string)),
-				XSZCJMC: fmt.Sprint(v.(map[string]interface{})["DJCJMC"].(string)),
+				XF:      v.(map[string]any)["XF"].(float64),
+				XSKCM:   fmt.Sprint(v.(map[string]any)["XSKCM"].(string)),
+				XSZCJMC: fmt.Sprint(v.(map[string]any)["DJCJMC"].(string)),
 				ZCJ:     zcj,
 				QMCJ:    qmcj,
 				PSCJ:    pscj,
@@ -211,7 +211,7 @@ func GetPYFADM(gsSession string, jwpubapp_WEU string) (pyfadm int, err error) {
 	resp, err := httpUtil.DoPost(url, requestCookies, nil)
 	respJson, _ := ioutil.ReadAll(resp.Body)
 	body := JSONToMap(string(respJson))
-	pyfadm, err = strconv.Atoi(fmt.Sprint(body["datas"].(map[string]interface{})["queryXsjbxx"].(map[string]interface{})["faArr"].([]interface{})[0].(map[string]interface{})["PYFADM"]))
+	pyfadm, err = strconv.Atoi(fmt.Sprint(body["datas"].(map[string]any)["queryXsjbxx"].(map[string]any)["faArr"].([]any)[0].(map[string]any)["PYFADM"]))
 	return
 }
 
@@ -228,17 +228,17 @@ func GetGPA(gsSession string, jwpubapp_WEU string, pyfadm int) (xytjs []model.Xy
 	resp, err := httpUtil.DoPost(url, requestCookies, nil)
 	respJson, _ := ioutil.ReadAll(resp.Body)
 	body := JSONToMap(string(respJson))
-	xqytjResponse := body["datas"].(map[string]interface{})["cxxsxqxf"].(map[string]interface{})["rows"]
-	for _, v := range xqytjResponse.([]interface{}) {
+	xqytjResponse := body["datas"].(map[string]any)["cxxsxqxf"].(map[string]any)["rows"]
+	for _, v := range xqytjResponse.([]any) {
 		xytjs = append(xytjs, model.Xytj{
-			XH:     fmt.Sprint(v.(map[string]interface{})["XH"].(string)),
-			XQGPA:  v.(map[string]interface{})["XQGPA"].(float64),
-			YXXF:   v.(map[string]interface{})["YXXF"].(float64),
-			YHXF:   v.(map[string]interface{})["YHXF"].(float64),
-			XNXQDM: fmt.Sprint(v.(map[string]interface{})["XNXQDM"].(string)),
-			BJGXF:  v.(map[string]interface{})["BJGXF"].(float64),
-			LJGPA:  v.(map[string]interface{})["LJGPA"].(float64),
-			WLCJXF: v.(map[string]interface{})["WLCJXF"].(float64),
+			XH:     fmt.Sprint(v.(map[string]any)["XH"].(string)),
+			XQGPA:  v.(map[string]any)["XQGPA"].(float64),
+			YXXF:   v.(map[string]any)["YXXF"].(float64),
+			YHXF:   v.(map[string]any)["YHXF"].(float64),
+			XNXQDM: fmt.Sprint(v.(map[string]any)["XNXQDM"].(string)),
+			BJGXF:  v.(map[string]any)["BJGXF"].(float64),
+			LJGPA:  v.(map[string]any)["LJGPA"].(float64),
+			WLCJXF: v.(map[string]any)["WLCJXF"].(float64),
 		})
 	}
 	return
