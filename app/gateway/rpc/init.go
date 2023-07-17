@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/resolver"
 	"hqujwc/config"
 	"hqujwc/idl/pb/jwc"
+	"hqujwc/idl/pb/wx"
 	"hqujwc/pkg/discovery"
 	"log"
 	"time"
@@ -20,6 +21,7 @@ var (
 	CancelFunc context.CancelFunc
 
 	JwcClient jwc.JwcServiceClient
+	WxClient  wx.WxServiceClient
 )
 
 func Init() {
@@ -29,6 +31,7 @@ func Init() {
 
 	defer Register.Close()
 	initClient(config.Conf.Domain["jwc"].Name, &JwcClient)
+	initClient(config.Conf.Domain["wx"].Name, &WxClient)
 }
 
 func initClient(serviceName string, client interface{}) {
@@ -41,6 +44,8 @@ func initClient(serviceName string, client interface{}) {
 	switch c := client.(type) {
 	case *jwc.JwcServiceClient:
 		*c = jwc.NewJwcServiceClient(conn)
+	case *wx.WxServiceClient:
+		*c = wx.NewWxServiceClient(conn)
 	default:
 		panic("unsupported client type")
 	}

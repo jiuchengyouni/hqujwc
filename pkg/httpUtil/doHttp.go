@@ -8,9 +8,17 @@ import (
 	"time"
 )
 
-func DoPost(Url string, jsonValue []byte) (resp *http.Response, err error) {
+func DoPost(Url string, cookies map[string]string, jsonValue []byte) (resp *http.Response, err error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", Url, bytes.NewReader(jsonValue))
+	for k, v := range cookies {
+		cookie := &http.Cookie{
+			Name:    k,
+			Value:   v,
+			Expires: time.Now().Add(5 * time.Second),
+		}
+		req.AddCookie(cookie)
+	}
 	if err != nil {
 		fmt.Println("创建请求失败:", err)
 		return nil, errors.New("创建请求失败")

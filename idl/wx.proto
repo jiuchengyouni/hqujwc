@@ -1,0 +1,18 @@
+syntax="proto3";
+option go_package="wx/";
+
+message WxAccessRequest{
+  string Signature=1;
+  string Timestamp=2;
+  string Nonce=3;
+  string Echoster=4;
+}
+
+message WxAccessResponse{
+  string Echoster=1;
+  int64 Code=2;
+}
+
+service WxService{
+  rpc WeChatCallBack(WxAccessRequest)returns(WxAccessResponse);
+}

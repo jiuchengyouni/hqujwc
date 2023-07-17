@@ -39,3 +39,6 @@ func (*JwcSrv) GetGsSession(ctx context.Context, req *pb.LoginRequest) (resp *pb
 	resp.Code = 200
 	return
 }
+func (*JwcSrv) GetEmaphome_WEU(ctx context.Context) {
+
+}

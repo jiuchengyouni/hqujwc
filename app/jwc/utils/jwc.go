@@ -17,7 +17,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 )
 
 var loginurl string
@@ -112,30 +111,11 @@ func GetEmaphome_WEU(gsSession string) (emaphome_WEU string, err error) {
 }
 
 func GetCjcx_WEU(gsSession string, emaphome_WEU string) (cjcx_WEU string, err error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://jwapp.hqu.edu.cn/jwapp/sys/cjcx/*default/index.do?EMAP_LANG=zh", nil)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	cookie = &http.Cookie{
-		Name:    "_WEU",
-		Value:   emaphome_WEU,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
+	Url := "https://jwapp.hqu.edu.cn/jwapp/sys/cjcx/*default/index.do?EMAP_LANG=zh"
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	requestCookies["_WEU"] = emaphome_WEU
+	resp, err := httpUtil.DoGet(Url, requestCookies)
 	//fmt.Println(resp.Cookies())
 	cookies := fmt.Sprint(resp.Cookies())
 	var start int
@@ -152,33 +132,12 @@ func GetCjcx_WEU(gsSession string, emaphome_WEU string) (cjcx_WEU string, err er
 	return
 }
 
-func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, stuNum string) (grades []model.GradeInfo) {
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", "https://jwapp.hqu.edu.cn/jwapp/sys/cjcx/modules/cjcx/xscjcx.do", nil)
-	if err != nil {
-		fmt.Println("创建请求失败:", err)
-		return
-	}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	cookie = &http.Cookie{
-		Name:    "_WEU",
-		Value:   cjcx_WEU,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	req.Header.Set("Content-Type", "application/json")
-	// 发送请求
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("发送请求失败:", err)
-		return
-	}
-	defer resp.Body.Close()
+func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, stuNum string) (grades []model.GradeInfo, err error) {
+	Url := "https://jwapp.hqu.edu.cn/jwapp/sys/cjcx/modules/cjcx/xscjcx.do"
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	requestCookies["_WEU"] = cjcx_WEU
+	resp, err := httpUtil.DoPost(Url, requestCookies, nil)
 	respJson, _ := ioutil.ReadAll(resp.Body)
 	body := JSONToMap(string(respJson))
 	gradeResponse := body["datas"].(map[string]any)["xscjcx"].(map[string]any)["rows"]
@@ -223,30 +182,11 @@ func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, st
 }
 
 func GetJwpubapp_WEU(gsSession string, emaphome_WEU string) (jwpubapp_WEU string, err error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://jwapp.hqu.edu.cn/jwapp/sys/jwpubapp/pub/setJwCommonAppRole.do", nil)
-	if err != nil {
-		fmt.Println("创建请求失败:", err)
-		return
-	}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	cookie = &http.Cookie{
-		Name:    "_WEU",
-		Value:   emaphome_WEU,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
+	url := "https://jwapp.hqu.edu.cn/jwapp/sys/jwpubapp/pub/setJwCommonAppRole.do"
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	requestCookies["_WEU"] = emaphome_WEU
+	resp, err := httpUtil.DoGet(url, requestCookies)
 	cookies := fmt.Sprint(resp.Cookies())
 	fmt.Println(cookies)
 	var start int
@@ -264,30 +204,11 @@ func GetJwpubapp_WEU(gsSession string, emaphome_WEU string) (jwpubapp_WEU string
 }
 
 func GetPYFADM(gsSession string, jwpubapp_WEU string) (pyfadm int, err error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", "https://jwapp.hqu.edu.cn/jwapp/sys/byshapp/api/grbg/queryXsjbxx.do", nil)
-	if err != nil {
-		fmt.Println("创建请求失败:", err)
-		return
-	}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	cookie = &http.Cookie{
-		Name:    "_WEU",
-		Value:   jwpubapp_WEU,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
+	url := "https://jwapp.hqu.edu.cn/jwapp/sys/byshapp/api/grbg/queryXsjbxx.do"
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	requestCookies["_WEU"] = jwpubapp_WEU
+	resp, err := httpUtil.DoPost(url, requestCookies, nil)
 	respJson, _ := ioutil.ReadAll(resp.Body)
 	body := JSONToMap(string(respJson))
 	pyfadm, err = strconv.Atoi(fmt.Sprint(body["datas"].(map[string]interface{})["queryXsjbxx"].(map[string]interface{})["faArr"].([]interface{})[0].(map[string]interface{})["PYFADM"]))
@@ -301,30 +222,10 @@ func GetGPA(gsSession string, jwpubapp_WEU string, pyfadm int) (xytjs []model.Xy
 	params.Add("PYFADM", fmt.Sprintf("%d", pyfadm))
 	url := fmt.Sprintf("%s?%s", baseURL, params.Encode())
 	fmt.Println(url)
-	req, err := http.NewRequest("POST", url, nil)
-	if err != nil {
-		fmt.Println("创建请求失败:", err)
-		return
-	}
-	client := &http.Client{}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	cookie = &http.Cookie{
-		Name:    "_WEU",
-		Value:   jwpubapp_WEU,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	requestCookies["_WEU"] = jwpubapp_WEU
+	resp, err := httpUtil.DoPost(url, requestCookies, nil)
 	respJson, _ := ioutil.ReadAll(resp.Body)
 	body := JSONToMap(string(respJson))
 	xqytjResponse := body["datas"].(map[string]interface{})["cxxsxqxf"].(map[string]interface{})["rows"]
@@ -344,38 +245,17 @@ func GetGPA(gsSession string, jwpubapp_WEU string, pyfadm int) (xytjs []model.Xy
 }
 
 func GetSessionId(gsSession string, cjcx_WEU string, XH int) (sessionId string, err error) {
-	client := &http.Client{}
 	body := model.GetSessionIBody{
 		Reportlet: "cjcx/xscjpmtj.cpt",
 		XH:        XH,
 		BBWID:     "",
 	}
+	url := "https://jwapp.hqu.edu.cn/jwapp/sys/frReport2/show.do"
 	jsonValue, err := json.Marshal(body)
-	req, err := http.NewRequest("POST", "https://jwapp.hqu.edu.cn/jwapp/sys/frReport2/show.do", bytes.NewReader(jsonValue))
-	if err != nil {
-		fmt.Println("创建请求失败:", err)
-		return
-	}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	cookie = &http.Cookie{
-		Name:    "_WEU",
-		Value:   cjcx_WEU,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	req.Header.Set("Content-Type", "application/json")
-	// 发送请求
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("发送请求失败:", err)
-		return
-	}
-	defer resp.Body.Close()
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	requestCookies["_WEU"] = cjcx_WEU
+	resp, err := httpUtil.DoPost(url, requestCookies, jsonValue)
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		fmt.Println("解析HTML文档失败:", err)
@@ -400,30 +280,10 @@ func GetAllGpa(gsSession string, cjcx_WEU string, sessionId string) (result []st
 	params.Add("op", "page_content")
 	url := fmt.Sprintf("%s?%s", baseURL, params.Encode())
 	fmt.Println(url)
-	req, err := http.NewRequest("POST", url, nil)
-	if err != nil {
-		fmt.Println("创建请求失败:", err)
-		return
-	}
-	client := &http.Client{}
-	cookie := &http.Cookie{
-		Name:    "GS_SESSIONID",
-		Value:   gsSession,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	cookie = &http.Cookie{
-		Name:    "_WEU",
-		Value:   cjcx_WEU,
-		Expires: time.Now().Add(5 * time.Second),
-	}
-	req.AddCookie(cookie)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
+	requestCookies := make(map[string]string)
+	requestCookies["GS_SESSIONID"] = gsSession
+	requestCookies["_WEU"] = cjcx_WEU
+	resp, err := httpUtil.DoPost(url, requestCookies, nil)
 	reader := transform.NewReader(resp.Body, unicode.UTF8.NewDecoder())
 	doc2, err := ioutil.ReadAll(reader)
 	if err != nil {

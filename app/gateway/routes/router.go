@@ -10,5 +10,6 @@ func NewRouter() *gin.Engine {
 	ginRouter := gin.Default()
 	ginRouter.Use(middlewares.Cors())
 	ginRouter.POST("/jwc", http.GetSession)
+	ginRouter.GET("/WX", http.WeChatCallBack)
 	return ginRouter
 }
