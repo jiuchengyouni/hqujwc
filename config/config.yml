@@ -25,11 +25,12 @@ services:
     loadBalance: false
     addr:
       - 127.0.0.1:10002
+
   wx:
     name: wx
     loadBalance: false
-      addr:
-        - 127.0.0.1:10003
+    addr:
+      - 127.0.0.1:10003
 domain:
   jwc:
     name: jwc

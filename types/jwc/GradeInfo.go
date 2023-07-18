@@ -1,4 +1,4 @@
-package types
+package jwc
 
 type GradeInfo struct {
 	//XNXQDM_DISPLAY string `json:"XNXQDM_DISPLAY"`

@@ -11,6 +11,7 @@ import (
 	"golang.org/x/text/transform"
 	"hqujwc/pkg/httpUtil"
 	model "hqujwc/types"
+	"hqujwc/types/jwc"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -132,7 +133,7 @@ func GetCjcx_WEU(gsSession string, emaphome_WEU string) (cjcx_WEU string, err er
 	return
 }
 
-func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, stuNum string) (grades []model.GradeInfo, err error) {
+func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, stuNum string) (grades []jwc.GradeInfo, err error) {
 	Url := "https://jwapp.hqu.edu.cn/jwapp/sys/cjcx/modules/cjcx/xscjcx.do"
 	requestCookies := make(map[string]string)
 	requestCookies["GS_SESSIONID"] = gsSession
@@ -168,7 +169,7 @@ func GetInfo(gsSession string, cjcx_WEU string, semester string, year string, st
 			} else {
 				qmcj = fmt.Sprint(fmt.Sprint(v.(map[string]any)["QMCJ"].(string)))
 			}
-			grades = append(grades, model.GradeInfo{
+			grades = append(grades, jwc.GradeInfo{
 				XF:      v.(map[string]any)["XF"].(float64),
 				XSKCM:   fmt.Sprint(v.(map[string]any)["XSKCM"].(string)),
 				XSZCJMC: fmt.Sprint(v.(map[string]any)["DJCJMC"].(string)),
@@ -216,7 +217,7 @@ func GetPYFADM(gsSession string, jwpubapp_WEU string) (pyfadm int, err error) {
 }
 
 // 这个是对应学业监测统计的，等学业监测统计更新完成就可以使用
-func GetGPA(gsSession string, jwpubapp_WEU string, pyfadm int) (xytjs []model.Xytj, err error) {
+func GetGPA(gsSession string, jwpubapp_WEU string, pyfadm int) (xytjs []jwc.Xytj, err error) {
 	baseURL := "https://jwapp.hqu.edu.cn/jwapp/sys/byshapp/modules/grbg/cxxsxqxf.do"
 	params := url.Values{}
 	params.Add("PYFADM", fmt.Sprintf("%d", pyfadm))
@@ -230,7 +231,7 @@ func GetGPA(gsSession string, jwpubapp_WEU string, pyfadm int) (xytjs []model.Xy
 	body := JSONToMap(string(respJson))
 	xqytjResponse := body["datas"].(map[string]any)["cxxsxqxf"].(map[string]any)["rows"]
 	for _, v := range xqytjResponse.([]any) {
-		xytjs = append(xytjs, model.Xytj{
+		xytjs = append(xytjs, jwc.Xytj{
 			XH:     fmt.Sprint(v.(map[string]any)["XH"].(string)),
 			XQGPA:  v.(map[string]any)["XQGPA"].(float64),
 			YXXF:   v.(map[string]any)["YXXF"].(float64),
@@ -245,7 +246,7 @@ func GetGPA(gsSession string, jwpubapp_WEU string, pyfadm int) (xytjs []model.Xy
 }
 
 func GetSessionId(gsSession string, cjcx_WEU string, XH int) (sessionId string, err error) {
-	body := model.GetSessionIBody{
+	body := jwc.GetSessionIBody{
 		Reportlet: "cjcx/xscjpmtj.cpt",
 		XH:        XH,
 		BBWID:     "",

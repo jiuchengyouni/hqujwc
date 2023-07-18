@@ -1,4 +1,4 @@
-package types
+package jwc
 
 type GetSessionIBody struct {
 	Reportlet string `json:"reportlet"`

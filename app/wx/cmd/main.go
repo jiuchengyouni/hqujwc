@@ -1,11 +1,11 @@
-package cmd
+package main
 
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"hqujwc/app/wx/repository/dao"
-	"hqujwc/app/wx/repository/service"
+	"hqujwc/app/wx/service"
 	"hqujwc/config"
 	wxPb "hqujwc/idl/pb/wx"
 	"hqujwc/pkg/discovery"

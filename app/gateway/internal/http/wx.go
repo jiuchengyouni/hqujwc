@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"hqujwc/app/gateway/rpc"
 	pb "hqujwc/idl/pb/wx"
@@ -18,7 +19,9 @@ func WeChatCallBack(c *gin.Context) {
 		Nonce:     nonce,
 		Echoster:  echostr,
 	}
-	r, err := rpc.CheckSignature(c, &wxAccessRequest)
+	fmt.Println(wxAccessRequest)
+	_, err := rpc.CheckSignature(c, &wxAccessRequest)
+	fmt.Println(err)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 403,
@@ -27,5 +30,5 @@ func WeChatCallBack(c *gin.Context) {
 		})
 		return
 	}
-	c.String(http.StatusOK, r.Echoster)
+	c.String(http.StatusOK, echostr)
 }

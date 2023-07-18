@@ -1,4 +1,4 @@
-package types
+package jwc
 
 type Xytj struct {
 	XH     string  `json:"XH"`

@@ -39,6 +39,15 @@ func (*JwcSrv) GetGsSession(ctx context.Context, req *pb.LoginRequest) (resp *pb
 	resp.Code = 200
 	return
 }
-func (*JwcSrv) GetEmaphome_WEU(ctx context.Context) {
-
+func (*JwcSrv) GetEmaphome_WEU(ctx context.Context, req *pb.Emaphome_WEURequest) (resp *pb.Emaphome_WEUResponse, err error) {
+	resp = new(pb.Emaphome_WEUResponse)
+	resp.Code = 200
+	gsSession := req.GesSession
+	emaphome_WEU, err := utils.GetEmaphome_WEU(gsSession)
+	if err != nil {
+		resp.Code = 404
+		return
+	}
+	resp.Emaphome_WEU = emaphome_WEU
+	return
 }

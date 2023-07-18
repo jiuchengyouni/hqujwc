@@ -14,6 +14,17 @@ message GsSessionResponse{
   // @inject_tag: json:"code" form:"code" uri:"code"
   int64 code=2;
 }
+
+message Emaphome_WEURequest{
+  string  GesSession=1;
+}
+
+message Emaphome_WEUResponse{
+  string Emaphome_WEU=1;
+  int64 code=2;
+}
+
 service JwcService{
   rpc GetGsSession(LoginRequest)returns(GsSessionResponse);
+  rpc GetEmaphome_WEU(Emaphome_WEURequest)returns(Emaphome_WEUResponse);
 }

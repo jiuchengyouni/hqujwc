@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JwcService_GetGsSession_FullMethodName = "/JwcService/GetGsSession"
+	JwcService_GetGsSession_FullMethodName    = "/JwcService/GetGsSession"
+	JwcService_GetEmaphome_WEU_FullMethodName = "/JwcService/GetEmaphome_WEU"
 )
 
 // JwcServiceClient is the client API for JwcService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JwcServiceClient interface {
 	GetGsSession(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*GsSessionResponse, error)
+	GetEmaphome_WEU(ctx context.Context, in *Emaphome_WEURequest, opts ...grpc.CallOption) (*Emaphome_WEUResponse, error)
 }
 
 type jwcServiceClient struct {
@@ -46,11 +48,21 @@ func (c *jwcServiceClient) GetGsSession(ctx context.Context, in *LoginRequest, o
 	return out, nil
 }
 
+func (c *jwcServiceClient) GetEmaphome_WEU(ctx context.Context, in *Emaphome_WEURequest, opts ...grpc.CallOption) (*Emaphome_WEUResponse, error) {
+	out := new(Emaphome_WEUResponse)
+	err := c.cc.Invoke(ctx, JwcService_GetEmaphome_WEU_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JwcServiceServer is the server API for JwcService service.
 // All implementations must embed UnimplementedJwcServiceServer
 // for forward compatibility
 type JwcServiceServer interface {
 	GetGsSession(context.Context, *LoginRequest) (*GsSessionResponse, error)
+	GetEmaphome_WEU(context.Context, *Emaphome_WEURequest) (*Emaphome_WEUResponse, error)
 	mustEmbedUnimplementedJwcServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedJwcServiceServer struct {
 
 func (UnimplementedJwcServiceServer) GetGsSession(context.Context, *LoginRequest) (*GsSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGsSession not implemented")
+}
+func (UnimplementedJwcServiceServer) GetEmaphome_WEU(context.Context, *Emaphome_WEURequest) (*Emaphome_WEUResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEmaphome_WEU not implemented")
 }
 func (UnimplementedJwcServiceServer) mustEmbedUnimplementedJwcServiceServer() {}
 
@@ -92,6 +107,24 @@ func _JwcService_GetGsSession_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JwcService_GetEmaphome_WEU_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Emaphome_WEURequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JwcServiceServer).GetEmaphome_WEU(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JwcService_GetEmaphome_WEU_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JwcServiceServer).GetEmaphome_WEU(ctx, req.(*Emaphome_WEURequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JwcService_ServiceDesc is the grpc.ServiceDesc for JwcService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var JwcService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetGsSession",
 			Handler:    _JwcService_GetGsSession_Handler,
+		},
+		{
+			MethodName: "GetEmaphome_WEU",
+			Handler:    _JwcService_GetEmaphome_WEU_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
